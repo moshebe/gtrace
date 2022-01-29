@@ -1,4 +1,4 @@
-module gtrace
+module github.com/moshebe/gtrace
 
 go 1.17
 
