@@ -75,34 +75,39 @@ var listAction = func(c *cli.Context) error {
 }
 
 var ListCommand = &cli.Command{
-	Name:   "list",
-	Action: listAction,
+	Name:      "list",
+	Action:    listAction,
+	Usage:     "Query traces from a project according to the given conditions.",
+	UsageText: "gtrace list [command options]",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:    "project",
 			Aliases: []string{"p"},
+			Usage:   "the Google Cloud project ID to use for this invocation.",
 		},
 		&cli.IntFlag{
 			Name:  "limit",
 			Value: 10,
+			Usage: "maximum number of traces to return.",
 		},
 		&cli.DurationFlag{
-			Name: "since",
+			Name:  "since",
+			Usage: "time duration to inspect since now (e.g. 1h)",
 		},
 		&cli.StringSliceFlag{
 			Name:    "filter",
 			Aliases: []string{"f"},
+			Usage:   "filter traces according to Cloud Trace API syntax. can be set multiple times. See: https://cloud.google.com/trace/docs/trace-filters#filter_syntax",
 		},
 		&cli.TimestampFlag{
 			Name:   "start",
 			Layout: "2006-01-02T15:04:05",
+			Usage:  "start of the time interval (inclusive) during which the trace data was collected from the application.",
 		},
 		&cli.TimestampFlag{
 			Name:   "end",
 			Layout: "2006-01-02T15:04:05",
-		},
-		&cli.BoolFlag{
-			Name: "pretty",
+			Usage:  "end of the time interval (inclusive) during which the trace data was collected from the application.",
 		},
 	},
 }
