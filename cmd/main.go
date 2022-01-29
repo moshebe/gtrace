@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -13,6 +14,19 @@ import (
 	"gtrace/span"
 	"gtrace/trace"
 )
+
+func projects(c *cli.Context) []string {
+	var results []string
+	for _, p := range c.StringSlice("project") {
+		fmt.Printf("local p: %q\n", p)
+		results = append(results, strings.Split(p, ",")...)
+	}
+	for _, p := range c.GlobalStringSlice("project") {
+		fmt.Printf("global p: %q\n", p)
+		results = append(results, strings.Split(p, ",")...)
+	}
+	return results
+}
 
 // TODO: move from here
 func get(projects []string, id string, writer io.Writer) error {
@@ -58,18 +72,19 @@ func main() {
 				Name: "get",
 				Action: func(c *cli.Context) error {
 					id := c.Args().First()
-					projects := c.GlobalStringSlice("project")
-					if len(projects) == 1 {
-						projects = strings.Split(c.GlobalString("project"), ",")
-					}
-					return get(projects, id, os.Stdout)
+					proj := projects(c)
+					return get(proj, id, os.Stdout)
+				},
+				Flags: []cli.Flag{
+					&cli.StringSliceFlag{
+						Name: "project",
+					},
 				},
 			},
 		},
 		Flags: []cli.Flag{
 			&cli.StringSliceFlag{
-				Name:     "project",
-				Required: true,
+				Name: "project",
 			},
 		},
 	}
