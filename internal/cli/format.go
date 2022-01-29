@@ -51,22 +51,28 @@ var formatAction = func(c *cli.Context) error {
 }
 
 var FormatCommand = &cli.Command{
-	Name:   "format",
-	Action: formatAction,
+	Name:        "format",
+	Usage:       "Format trace spans according to a given template.",
+	Description: "See more information at: https://cloud.google.com/trace/docs/reference/v1/rest/v1/projects.traces#TraceSpan",
+	UsageText:   "gtrace format [command options]",
+	Action:      formatAction,
 	Flags: []cli.Flag{
 		&cli.PathFlag{
 			Name:    "input",
 			Aliases: []string{"i", "in"},
 			Value:   "-",
+			Usage:   "input file path. '-' means stdin",
 		},
 		&cli.PathFlag{
 			Name:    "output",
 			Aliases: []string{"o", "out"},
 			Value:   "-",
+			Usage:   "output file path. '-' means stdout",
 		},
 		&cli.StringFlag{
 			Name:  "template",
 			Value: "{{ .Name }}  ({{ .Start }}  -  took {{ .Duration }})\n{{ if .Labels }}\t{{ .Labels }}\n{{ end }}",
+			Usage: "templated pattern to format each span record base on TraceSpan properties\n\t",
 		},
 	},
 }

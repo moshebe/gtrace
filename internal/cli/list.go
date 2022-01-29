@@ -83,16 +83,16 @@ var ListCommand = &cli.Command{
 		&cli.StringFlag{
 			Name:    "project",
 			Aliases: []string{"p"},
-			Usage:   "the Google Cloud project ID to use for this invocation.",
+			Usage:   "the Google Cloud project ID to use for this invocation",
 		},
 		&cli.IntFlag{
 			Name:  "limit",
 			Value: 10,
-			Usage: "maximum number of traces to return.",
+			Usage: "maximum number of traces to return",
 		},
 		&cli.DurationFlag{
 			Name:  "since",
-			Usage: "time duration to inspect since now (e.g. 1h)",
+			Usage: "time duration to inspect since now",
 		},
 		&cli.StringSliceFlag{
 			Name:    "filter",
@@ -102,12 +102,12 @@ var ListCommand = &cli.Command{
 		&cli.TimestampFlag{
 			Name:   "start",
 			Layout: "2006-01-02T15:04:05",
-			Usage:  "start of the time interval (inclusive) during which the trace data was collected from the application.",
+			Usage:  "start of the time interval (inclusive) during which the trace data was collected from the application",
 		},
 		&cli.TimestampFlag{
 			Name:   "end",
 			Layout: "2006-01-02T15:04:05",
-			Usage:  "end of the time interval (inclusive) during which the trace data was collected from the application.",
+			Usage:  "end of the time interval (inclusive) during which the trace data was collected from the application",
 		},
 	},
 }
