@@ -38,10 +38,7 @@ func (t *Tracer) MultiGet(ctx context.Context, projects []string, traceID string
 		ProjectId: strings.Join(projects, "+"),
 	}
 	for _, project := range projects {
-		res, err := t.client.GetTrace(ctx, &cloudtrace.GetTraceRequest{
-			ProjectId: project,
-			TraceId:   traceID,
-		})
+		res, err := t.Get(ctx, project, traceID)
 		if err == nil {
 			result.Spans = append(result.Spans, res.Spans...)
 		}
