@@ -78,3 +78,15 @@ func Summary(spans []*cloudtrace.TraceSpan, writer io.Writer) error {
 
 	return nil
 }
+
+func ListRootSpans(traces []*cloudtrace.Trace) map[string][]string {
+	results := make(map[string][]string, len(traces))
+	for _, t := range traces {
+		if len(t.Spans) == 0 {
+			continue
+		}
+		name := t.Spans[0].Name
+		results[name] = append(results[name], t.TraceId)
+	}
+	return results
+}

@@ -1,4 +1,4 @@
-package trace
+package tracer
 
 import (
 	"context"
@@ -23,7 +23,7 @@ func NewTracer(ctx context.Context) (*Tracer, error) {
 	return &Tracer{client: client}, nil
 }
 
-// Get retrieve trace from a specific project by the trace id.
+// Get retrieve tracer from a specific project by the tracer id.
 func (t *Tracer) Get(ctx context.Context, projectID, traceID string) (*cloudtrace.Trace, error) {
 	return t.client.GetTrace(ctx, &cloudtrace.GetTraceRequest{
 		ProjectId: projectID,
@@ -31,7 +31,7 @@ func (t *Tracer) Get(ctx context.Context, projectID, traceID string) (*cloudtrac
 	})
 }
 
-// MultiGet retrieve trace from multiple projects by the trace id and aggregate the spans.
+// MultiGet retrieve tracer from multiple projects by the tracer id and aggregate the spans.
 func (t *Tracer) MultiGet(ctx context.Context, projects []string, traceID string) (*cloudtrace.Trace, error) {
 	result := &cloudtrace.Trace{
 		TraceId:   traceID,
@@ -44,7 +44,7 @@ func (t *Tracer) MultiGet(ctx context.Context, projects []string, traceID string
 		}
 	}
 	if len(result.Spans) == 0 {
-		return nil, fmt.Errorf("trace not found")
+		return nil, fmt.Errorf("tracer not found")
 	}
 	return result, nil
 }
