@@ -1,11 +1,11 @@
 package span
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"sort"
+	"text/template"
+	"time"
 
 	"google.golang.org/genproto/googleapis/devtools/cloudtrace/v1"
 	"gtrace/filter"
@@ -58,20 +58,26 @@ func FilterLabels(labels map[string]string, f *filter.Filter) map[string]string 
 	return result
 }
 
-func Summary(spans []*cloudtrace.TraceSpan, writer io.Writer) error {
-	var buf bytes.Buffer
-	for _, s := range spans {
-		duration := s.EndTime.AsTime().Sub(s.StartTime.AsTime())
-		buf.WriteString(fmt.Sprintf("%s (%v - %s)\n", s.Name, s.StartTime.AsTime(), duration))
-		if len(s.Labels) > 0 {
-			labels, err := json.Marshal(s.Labels)
-			if err != nil {
-				return err
-			}
-			buf.WriteString(fmt.Sprintf("\t%s\n", labels))
-		}
+func Format(spans []*cloudtrace.TraceSpan, format string, writer io.Writer) error {
+	type ExtSpan struct {
+		*cloudtrace.TraceSpan
+		Duration   time.Duration
+		Start, End time.Time
+	}
 
-		if _, err := writer.Write(buf.Bytes()); err != nil {
+	t, err := template.New("").Parse(format)
+	if err != nil {
+		return fmt.Errorf("parse format: %w", err)
+	}
+
+	for _, s := range spans {
+		err = t.Execute(writer, ExtSpan{
+			TraceSpan: s,
+			Start:     s.StartTime.AsTime(),
+			End:       s.EndTime.AsTime(),
+			Duration:  s.EndTime.AsTime().Sub(s.StartTime.AsTime()),
+		})
+		if err != nil {
 			return err
 		}
 	}

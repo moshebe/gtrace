@@ -16,6 +16,15 @@ import (
 	"gtrace/tracer"
 )
 
+const (
+	createFileFlags = os.O_RDWR | os.O_CREATE
+	createFilePerm  = 0660
+)
+
+func stdio(value string) bool {
+	return value == "-" || value == ""
+}
+
 func stringSlice(c *cli.Context, name string) []string {
 	var results []string
 	for _, v := range c.StringSlice(name) {
@@ -100,7 +109,7 @@ func main() {
 
 					writer := os.Stdout
 					if output != "-" && output != "" {
-						f, err := os.OpenFile(output, os.O_RDWR|os.O_CREATE, 0660)
+						f, err := os.OpenFile(output, createFileFlags, createFilePerm)
 						if err != nil {
 							return err
 						}
@@ -210,6 +219,63 @@ func main() {
 					&cli.StringFlag{
 						Name:    "project",
 						Aliases: []string{"p"},
+					},
+				},
+			},
+			{
+				Name: "format",
+				Action: func(c *cli.Context) error {
+					format := c.String("template")
+					input, output := c.String("input"), c.String("output")
+
+					in, out := os.Stdin, os.Stdout
+
+					if !stdio(input) {
+						f, err := os.Open(input)
+						if err != nil {
+							return err
+						}
+						defer func() { _ = f.Close() }()
+
+						in = f
+					}
+
+					if !stdio(output) {
+						f, err := os.OpenFile(output, createFileFlags, createFilePerm)
+						if err != nil {
+							return err
+						}
+						defer func() { _ = f.Close() }()
+
+						out = f
+					}
+
+					var trace cloudtrace.Trace
+					traceJSON, err := io.ReadAll(in)
+					if err != nil {
+						return fmt.Errorf("read input: %w", err)
+					}
+					err = protojson.Unmarshal(traceJSON, &trace)
+					if err != nil {
+						return fmt.Errorf("nmarshal trace: %w", err)
+					}
+
+					return span.Format(trace.Spans, format, out)
+				},
+				Flags: []cli.Flag{
+					&cli.PathFlag{
+						Name:    "input",
+						Aliases: []string{"i", "in"},
+						Value:   "-",
+					},
+					&cli.PathFlag{
+						Name:    "output",
+						Aliases: []string{"o", "out"},
+						Value:   "-",
+					},
+					&cli.StringFlag{
+						Name:  "template",
+						Value: "{{ .Name }}  ({{ .Start }}  -  took {{ .Duration }})\n{{ if .Labels }}\t{{ .Labels }}\n{{ end }}",
 					},
 				},
 			},
