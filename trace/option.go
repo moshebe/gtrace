@@ -4,24 +4,24 @@ import (
 	"strings"
 	"time"
 
-	tracev1 "google.golang.org/genproto/googleapis/devtools/cloudtrace/v1"
+	"google.golang.org/genproto/googleapis/devtools/cloudtrace/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type ListOption func(request *tracev1.ListTracesRequest)
+type ListOption func(request *cloudtrace.ListTracesRequest)
 
 func WithStartTime(start time.Time) ListOption {
-	return func(r *tracev1.ListTracesRequest) {
+	return func(r *cloudtrace.ListTracesRequest) {
 		r.StartTime = timestamppb.New(start)
 	}
 }
 func WithEndTime(end time.Time) ListOption {
-	return func(r *tracev1.ListTracesRequest) {
+	return func(r *cloudtrace.ListTracesRequest) {
 		r.EndTime = timestamppb.New(end)
 	}
 }
 func WithSince(since time.Duration) ListOption {
-	return func(r *tracev1.ListTracesRequest) {
+	return func(r *cloudtrace.ListTracesRequest) {
 		now := time.Now()
 		r.StartTime = timestamppb.New(now.Add(-since))
 		r.EndTime = timestamppb.New(now)
@@ -29,7 +29,7 @@ func WithSince(since time.Duration) ListOption {
 }
 
 func WithFilter(filters ...string) ListOption {
-	return func(r *tracev1.ListTracesRequest) {
+	return func(r *cloudtrace.ListTracesRequest) {
 		if len(filters) <= 0 {
 			return
 		}
@@ -42,13 +42,13 @@ func WithFilter(filters ...string) ListOption {
 }
 
 func WithLimit(limit int32) ListOption {
-	return func(r *tracev1.ListTracesRequest) {
+	return func(r *cloudtrace.ListTracesRequest) {
 		r.PageSize = limit
 	}
 }
 
 func WithOrderBy(field string, desc bool) ListOption {
-	return func(r *tracev1.ListTracesRequest) {
+	return func(r *cloudtrace.ListTracesRequest) {
 		r.OrderBy = field
 		if desc {
 			r.OrderBy += " desc"
@@ -66,7 +66,7 @@ func WithOrderByName(desc bool) ListOption {
 }
 
 func WithOnlyRootSpanView() ListOption {
-	return func(r *tracev1.ListTracesRequest) {
-		r.View = tracev1.ListTracesRequest_ROOTSPAN
+	return func(r *cloudtrace.ListTracesRequest) {
+		r.View = cloudtrace.ListTracesRequest_ROOTSPAN
 	}
 }

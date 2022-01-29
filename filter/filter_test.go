@@ -1,6 +1,8 @@
 package filter
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestPass(t *testing.T) {
 	tests := []struct {
