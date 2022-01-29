@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -66,17 +65,14 @@ func list(project string, writer io.Writer, opt ...tracer.ListOption) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("marshaling...\n")
-	traceJSON, err := json.MarshalIndent(traces, "", "\t")
-	if err != nil {
-		return err
-	}
 
-	_, err = writer.Write(traceJSON)
-	if err != nil {
-		return err
+	rootSpans := span.ListRootSpans(traces)
+	for name, ids := range rootSpans {
+		_, err := fmt.Fprintf(writer, "%s (%v)\n", name, ids)
+		if err != nil {
+			return err
+		}
 	}
-
 	return nil
 }
 
@@ -86,7 +82,7 @@ func main() {
 		Version:   "v1.0.0",
 		Compiled:  time.Now(),
 		Copyright: "(c) 1999 Serious Enterprise",
-		HelpName:  "contrive",
+		HelpName:  "gtrace",
 		Usage:     "demonstrate available API",
 		UsageText: "contrive - demonstrating the available API",
 		ArgsUsage: "[args and such]",
@@ -97,6 +93,10 @@ func main() {
 					id := c.Args().First()
 					output := c.Path("output")
 					projects := stringSlice(c, "project")
+
+					if id == "" {
+						return fmt.Errorf("missing trace id")
+					}
 
 					writer := os.Stdout
 					if output != "-" && output != "" {
@@ -120,13 +120,16 @@ func main() {
 						Aliases: []string{"o", "out"},
 						Value:   "-",
 					},
+					&cli.BoolFlag{
+						Name: "pretty",
+					},
 				},
 			},
 			{
 				Name: "list",
 				Action: func(c *cli.Context) error {
-					proj := stringSlice(c, "project")
-					if len(proj) <= 0 {
+					projects := stringSlice(c, "project")
+					if len(projects) <= 0 {
 						return fmt.Errorf("missing project")
 					}
 
@@ -144,17 +147,25 @@ func main() {
 						opts = append(opts, tracer.WithFilter(c.StringSlice("filter")...))
 					}
 
+					if ts := c.Timestamp("start"); ts != nil {
+						opts = append(opts, tracer.WithStartTime(*ts))
+					}
+
+					if ts := c.Timestamp("end"); ts != nil {
+						opts = append(opts, tracer.WithEndTime(*ts))
+					}
+
 					req := &cloudtrace.ListTracesRequest{}
-					fmt.Printf("project: %s\n", proj[0])
 					for _, o := range opts {
 						o(req)
 					}
 					fmt.Printf("%+v\n", req)
-					return list(proj[0], os.Stdout, opts...)
+					return list(projects[0], os.Stdout, opts...)
 				},
 				Flags: []cli.Flag{
-					&cli.StringSliceFlag{
-						Name: "project",
+					&cli.StringFlag{
+						Name:    "project",
+						Aliases: []string{"p"},
 					},
 					&cli.IntFlag{
 						Name:  "limit",
@@ -164,7 +175,41 @@ func main() {
 						Name: "since",
 					},
 					&cli.StringSliceFlag{
-						Name: "filter",
+						Name:    "filter",
+						Aliases: []string{"f"},
+					},
+					&cli.TimestampFlag{
+						Name:   "start",
+						Layout: "2006-01-02T15:04:05",
+					},
+					&cli.TimestampFlag{
+						Name:   "end",
+						Layout: "2006-01-02T15:04:05",
+					},
+					&cli.BoolFlag{
+						Name: "pretty",
+					},
+				},
+			},
+			{
+				Name: "url",
+				Action: func(c *cli.Context) error {
+					id := c.Args().First()
+					if id == "" {
+						return fmt.Errorf("missing trace id")
+					}
+
+					projectPath := ""
+					if c.IsSet("project") {
+						projectPath += "&project=" + c.String("project")
+					}
+					fmt.Printf("https://console.cloud.google.com/traces/list?tid=%s%s\n", id, projectPath)
+					return nil
+				},
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "project",
+						Aliases: []string{"p"},
 					},
 				},
 			},

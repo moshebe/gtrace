@@ -44,7 +44,7 @@ func (t *Tracer) MultiGet(ctx context.Context, projects []string, traceID string
 		}
 	}
 	if len(result.Spans) == 0 {
-		return nil, fmt.Errorf("tracer not found")
+		return nil, fmt.Errorf("trace %q not found", traceID)
 	}
 	return result, nil
 }
