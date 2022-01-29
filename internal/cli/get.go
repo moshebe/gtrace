@@ -47,7 +47,11 @@ var getAction = func(c *cli.Context) error {
 
 	span.Sort(trace.Spans)
 
-	traceJSON, err := protojson.MarshalOptions{Indent: "\t"}.Marshal(trace)
+	indent := ""
+	if c.Bool("pretty") {
+		indent = "\t"
+	}
+	traceJSON, err := protojson.MarshalOptions{Indent: indent}.Marshal(trace)
 	if err != nil {
 		return fmt.Errorf("marshal trace: %w", err)
 	}
@@ -61,8 +65,10 @@ var getAction = func(c *cli.Context) error {
 }
 
 var GetCommand = &cli.Command{
-	Name:   "get",
-	Action: getAction,
+	Name:        "get",
+	Action:      getAction,
+	Usage:       "Get a specific trace by id from one or more projects",
+	Description: "Retrieve the trace information from the given project(s), aggregate the results and sort the spans by their start time",
 	Flags: []cli.Flag{
 		&cli.StringSliceFlag{
 			Name:    "project",
