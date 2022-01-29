@@ -7,7 +7,7 @@
 </center>
 
 
-### **gtrace** - Unofficial, simple and effective Google Cloud Trace CLI tool.
+### Unofficial, simple and effective Google Cloud Trace CLI tool.
 
 </br></br>
 # Installation
