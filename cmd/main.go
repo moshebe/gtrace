@@ -10,20 +10,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"google.golang.org/genproto/googleapis/devtools/cloudtrace/v1"
 	"google.golang.org/protobuf/encoding/protojson"
 	"gtrace/span"
 	"gtrace/tracer"
 )
 
-func projects(c *cli.Context) []string {
+func stringSlice(c *cli.Context, name string) []string {
 	var results []string
-	for _, p := range c.StringSlice("project") {
-		results = append(results, strings.Split(p, ",")...)
-	}
-	for _, p := range c.GlobalStringSlice("project") {
-		results = append(results, strings.Split(p, ",")...)
+	for _, v := range c.StringSlice(name) {
+		results = append(results, strings.Split(v, ",")...)
 	}
 	return results
 }
@@ -93,24 +90,42 @@ func main() {
 		Usage:     "demonstrate available API",
 		UsageText: "contrive - demonstrating the available API",
 		ArgsUsage: "[args and such]",
-		Commands: []cli.Command{
+		Commands: []*cli.Command{
 			{
 				Name: "get",
 				Action: func(c *cli.Context) error {
 					id := c.Args().First()
-					proj := projects(c)
-					return get(proj, id, os.Stdout)
+					output := c.Path("output")
+					projects := stringSlice(c, "project")
+
+					writer := os.Stdout
+					if output != "-" && output != "" {
+						f, err := os.OpenFile(output, os.O_RDWR|os.O_CREATE, 0660)
+						if err != nil {
+							return err
+						}
+						defer func() { _ = f.Close() }()
+						writer = f
+					}
+
+					return get(projects, id, writer)
 				},
 				Flags: []cli.Flag{
 					&cli.StringSliceFlag{
-						Name: "project",
+						Name:    "project",
+						Aliases: []string{"p"},
+					},
+					&cli.PathFlag{
+						Name:    "output",
+						Aliases: []string{"o", "out"},
+						Value:   "-",
 					},
 				},
 			},
 			{
 				Name: "list",
 				Action: func(c *cli.Context) error {
-					proj := projects(c)
+					proj := stringSlice(c, "project")
 					if len(proj) <= 0 {
 						return fmt.Errorf("missing project")
 					}
@@ -152,11 +167,6 @@ func main() {
 						Name: "filter",
 					},
 				},
-			},
-		},
-		Flags: []cli.Flag{
-			&cli.StringSliceFlag{
-				Name: "project",
 			},
 		},
 	}
