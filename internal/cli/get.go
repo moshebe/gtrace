@@ -68,19 +68,23 @@ var GetCommand = &cli.Command{
 	Name:        "get",
 	Action:      getAction,
 	Usage:       "Get a specific trace by id from one or more projects",
-	Description: "Retrieve the trace information from the given project(s), aggregate the results and sort the spans by their start time",
+	Description: "Retrieve the trace information from the given project(s), aggregate the results and sort the spans by their start time.",
+	UsageText:   "gtrace get [command options] <trace-id>",
 	Flags: []cli.Flag{
 		&cli.StringSliceFlag{
 			Name:    "project",
 			Aliases: []string{"p"},
+			Usage:   "the Google Cloud project ID to use for this invocation. values can be set multiple times or separated by comma",
 		},
 		&cli.PathFlag{
 			Name:    "output",
 			Aliases: []string{"o", "out"},
 			Value:   "-",
+			Usage:   "output file path. '-' means stdout",
 		},
 		&cli.BoolFlag{
-			Name: "pretty",
+			Name:  "pretty",
+			Usage: "prettify JSON output",
 		},
 	},
 }
