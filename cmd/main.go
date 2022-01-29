@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -18,11 +17,9 @@ import (
 func projects(c *cli.Context) []string {
 	var results []string
 	for _, p := range c.StringSlice("project") {
-		fmt.Printf("local p: %q\n", p)
 		results = append(results, strings.Split(p, ",")...)
 	}
 	for _, p := range c.GlobalStringSlice("project") {
-		fmt.Printf("global p: %q\n", p)
 		results = append(results, strings.Split(p, ",")...)
 	}
 	return results
@@ -44,7 +41,7 @@ func get(projects []string, id string, writer io.Writer) error {
 
 	span.Sort(trc.Spans)
 
-	traceJSON, err := protojson.Marshal(trc)
+	traceJSON, err := protojson.MarshalOptions{Indent: "\t"}.Marshal(trc)
 	if err != nil {
 		return err
 	}
