@@ -21,12 +21,15 @@ var urlAction = func(c *cli.Context) error {
 }
 
 var URLCommand = &cli.Command{
-	Name:   "url",
-	Action: urlAction,
+	Name:      "url",
+	Usage:     "Generate a browsable URL for a given trace.",
+	UsageText: "gtrace get [--project <project-id>] <trace-id>",
+	Action:    urlAction,
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:    "project",
 			Aliases: []string{"p"},
+			Usage:   "the Google Cloud project ID to specify on the generated URL.",
 		},
 	},
 }
