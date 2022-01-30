@@ -7,7 +7,7 @@
 </center>
 
 
-### Unofficial, simple yet effective Google Cloud Trace CLI tool.
+Unofficial, simple yet effective Google Cloud Trace CLI tool.
 
 </br></br>
 # Installation
