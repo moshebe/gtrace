@@ -77,7 +77,7 @@ var listAction = func(c *cli.Context) error {
 var ListCommand = &cli.Command{
 	Name:      "list",
 	Action:    listAction,
-	Usage:     "Query traces from a project according to the given conditions.",
+	Usage:     "Query traces from a project according to the given conditions",
 	UsageText: "gtrace list [command options]",
 	Flags: []cli.Flag{
 		&cli.StringFlag{

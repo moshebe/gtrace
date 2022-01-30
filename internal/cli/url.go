@@ -22,7 +22,7 @@ var urlAction = func(c *cli.Context) error {
 
 var URLCommand = &cli.Command{
 	Name:      "url",
-	Usage:     "Generate a browsable URL for a given trace.",
+	Usage:     "Generate a browsable URL for a given trace",
 	UsageText: "gtrace get [--project <project-id>] <trace-id>",
 	Action:    urlAction,
 	Flags: []cli.Flag{

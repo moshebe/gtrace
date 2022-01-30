@@ -12,6 +12,20 @@ const (
 	createFilePerm  = 0660
 )
 
+var App = &cliv2.App{
+	Name:      "gtrace",
+	Version:   "v1.0.0",
+	HelpName:  "gtrace",
+	Usage:     "Google Cloud Trace CLI tool",
+	UsageText: "Simple command-line tool for query and fetch tracing information from Cloud Trace API.\n   Find more information at: https://cloud.google.com/trace/docs",
+	Commands: []*cliv2.Command{
+		GetCommand,
+		ListCommand,
+		URLCommand,
+		FormatCommand,
+	},
+}
+
 func stdio(value string) bool {
 	return value == "-" || value == ""
 }
