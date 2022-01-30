@@ -30,9 +30,9 @@ VERSION:
 
 COMMANDS:
    get      Get a specific trace by id from one or more projects
-   list     Query traces from a project according to the given conditions.
-   url      Generate a browsable URL for a given trace.
-   format   Format trace spans according to a given template.
+   list     Query traces from a project according to the given conditions
+   url      Generate a browsable URL for a given trace
+   format   Format trace spans according to a given template
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
