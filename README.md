@@ -7,8 +7,11 @@ Unofficial, simple yet effective Google Cloud Trace CLI tool.
 
 </br></br>
 # Installation
-TODO
-
+```
+go install github.com/
+```
+go install github.com/moshebe/gtrace@latest
+```
 
 # Usage
 
