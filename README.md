@@ -1,12 +1,8 @@
-<!-- ![Alt text](assets/gtrace.svg?raw=true"gtrace") -->
-<!-- <div style="text-align:center">
-  <img src="assets/gtrace.svg" />
-</div> -->
-<center>
-    <img src="assets/gtrace.svg" />
-</center>
+<p align="center">
+    <img src="assets/gtrace.svg" height="250" width="250"/>
+</p>
 
-
+</br>
 Unofficial, simple yet effective Google Cloud Trace CLI tool.
 
 </br></br>
