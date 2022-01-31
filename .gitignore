@@ -1,3 +1,6 @@
 .idea
 .scripts
 gtrace
+dist/
+coverage.txt
+profile.out
