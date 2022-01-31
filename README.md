@@ -11,13 +11,18 @@ Unofficial, simple yet effective Google Cloud Trace CLI tool.
 
 </br></br>
 # Installation
+### [Homebrew](https://brew.sh/) (Linux/macOS)
+```shell
+brew install moshebe/gtrace
 ```
+### [Go](https://golang.org) (Linux/Windows/macOS/any other platform supported by Go)
+If you have Go 1.16+, you can install latest released version of `gtrace` directly from source by running:
+```shell
 go install github.com/moshebe/gtrace@latest
 ```
 
 # Usage
-
-```
+```shell
 › gtrace help
 NAME:
    gtrace - Google Cloud Trace CLI tool
@@ -44,17 +49,17 @@ GLOBAL OPTIONS:
 # Examples
 
 Fetch a specific trace from multiple projects:
-```
+```shell
 gtrace get --project production-a,production-b 5e26a889fa12da351beee9ea16ce0a65
 ```
 
 Format trace spans by a specific template:
-```
+```shell
 gtrace format --input /tmp/trace.json --template "{{ .Name }}, {{ .Duration }}"
 ```
 
 Query traces by multiple filters from the last 3 hours:
-```
+```shell
 gtrace list --project dev --limit 10 --since 3h --filter service:api --filter user-id:1234
 ```
 
