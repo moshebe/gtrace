@@ -2,8 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"io"
-	"os"
 
 	"github.com/moshebe/gtrace/pkg/span"
 	"github.com/urfave/cli/v2"
@@ -15,37 +13,22 @@ var formatAction = func(c *cli.Context) error {
 	format := c.String("template")
 	input, output := c.String("input"), c.String("output")
 
-	in, out := os.Stdin, os.Stdout
-
-	if !stdio(input) {
-		f, err := os.Open(input)
-		if err != nil {
-			return err
-		}
-		defer func() { _ = f.Close() }()
-
-		in = f
-	}
-
-	if !stdio(output) {
-		f, err := os.OpenFile(output, createFileFlags, createFilePerm)
-		if err != nil {
-			return err
-		}
-		defer func() { _ = f.Close() }()
-
-		out = f
+	in, err := read(input)
+	if err != nil {
+		return err
 	}
 
 	var trace cloudtrace.Trace
-	traceJSON, err := io.ReadAll(in)
-	if err != nil {
-		return fmt.Errorf("read input: %w", err)
-	}
-	err = protojson.Unmarshal(traceJSON, &trace)
+	err = protojson.Unmarshal(in, &trace)
 	if err != nil {
 		return fmt.Errorf("nmarshal trace: %w", err)
 	}
+
+	out, err := writer(output)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = out.Close() }()
 
 	return span.Format(trace.Spans, format, out)
 }
