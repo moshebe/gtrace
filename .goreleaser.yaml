@@ -26,3 +26,9 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+brews:
+  - name: gtrace
+    homepage: https://github.com/moshebe/gtrace
+    tap:
+      owner: moshebe
+      name: homebrew-gtrace
