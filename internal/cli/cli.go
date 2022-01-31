@@ -8,11 +8,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const (
-	createFileFlags = os.O_RDWR | os.O_CREATE
-	createFilePerm  = 0660
-)
-
 func App(version string) *cli.App {
 	return &cli.App{
 		Name:      "gtrace",

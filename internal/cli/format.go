@@ -21,7 +21,7 @@ var formatAction = func(c *cli.Context) error {
 	var trace cloudtrace.Trace
 	err = protojson.Unmarshal(in, &trace)
 	if err != nil {
-		return fmt.Errorf("nmarshal trace: %w", err)
+		return fmt.Errorf("unmarshal trace: %w", err)
 	}
 
 	out, err := writer(output)
