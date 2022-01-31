@@ -1,15 +1,28 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/moshebe/gtrace/internal/cli"
-	"github.com/moshebe/gtrace/internal/version"
 )
 
+var (
+	version = "dev"
+	commit  = "none"
+)
+
+func versionName() string {
+	if !strings.Contains(version, "-") {
+		return version
+	}
+	return fmt.Sprintf("%s (%s)", version, commit)
+}
+
 func main() {
-	if err := cli.App(version.Name()).Run(os.Args); err != nil {
+	if err := cli.App(versionName()).Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
 }
