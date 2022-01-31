@@ -19,6 +19,7 @@ jobs:
         with:
           version: v1.29
   test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
     - name: Install Go
