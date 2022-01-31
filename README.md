@@ -41,6 +41,16 @@ GLOBAL OPTIONS:
    --version, -v  print the version (default: false)
 ```
 
+# Authentication
+
+Google Cloud APIs has a few methods to authenticate:
+1. On your machine maka sure you have `gcloud` and that you are logged-in and then run `gcloud auth application-default login`
+1. If you are running on GKE you can use Workload Identity
+1. Service accounts with JSON keys
+1. Pointing to your service account via env `GOOGLE_APPLICATION_CREDENTIALS`
+
+> You can read about it more on: https://cloud.google.com/docs/authentication/getting-started
+
 # Examples
 
 Fetch a specific trace from multiple projects:

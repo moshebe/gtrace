@@ -22,8 +22,7 @@ func versionName() string {
 }
 
 func main() {
-	err := cli.App(versionName()).Run(os.Args)
-	if err != nil {
+	if err := cli.App(versionName()).Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
 }

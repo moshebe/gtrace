@@ -3,7 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
-	"os"
+	"time"
 
 	"github.com/moshebe/gtrace/pkg/span"
 	"github.com/moshebe/gtrace/pkg/tracer"
@@ -23,17 +23,15 @@ var getAction = func(c *cli.Context) error {
 		return fmt.Errorf("missing trace id")
 	}
 
-	writer := os.Stdout
-	if !stdio(output) {
-		f, err := os.OpenFile(output, createFileFlags, createFilePerm)
-		if err != nil {
-			return fmt.Errorf("open file %q: %w", output, err)
-		}
-		defer func() { _ = f.Close() }()
-		writer = f
+	out, err := writer(output)
+	if err != nil {
+		return err
 	}
+	defer func() { _ = out.Close() }()
 
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(c.Context, time.Minute)
+	defer cancel()
+
 	trc, err := tracer.NewTracer(ctx)
 	if err != nil {
 		return err
@@ -56,7 +54,7 @@ var getAction = func(c *cli.Context) error {
 		return fmt.Errorf("marshal trace: %w", err)
 	}
 
-	_, err = writer.Write(traceJSON)
+	_, err = out.Write(traceJSON)
 	if err != nil {
 		return fmt.Errorf("write trace: %w", err)
 	}
