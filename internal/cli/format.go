@@ -12,9 +12,9 @@ import (
 
 var formatAction = func(c *cli.Context) error {
 	format := c.String("template")
-	input := c.String("input")
+	file := c.String("file")
 
-	in, err := read(input)
+	in, err := read(file)
 	if err != nil {
 		return err
 	}
@@ -36,8 +36,8 @@ var FormatCommand = &cli.Command{
 	Action:      formatAction,
 	Flags: []cli.Flag{
 		&cli.PathFlag{
-			Name:    "input",
-			Aliases: []string{"i", "in"},
+			Name:    "file",
+			Aliases: []string{"f"},
 			Value:   "-",
 			Usage:   "input file path. '-' means stdin",
 		},
