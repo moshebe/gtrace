@@ -2,15 +2,19 @@ package cli
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"os"
-	"text/tabwriter"
 
 	"github.com/moshebe/gtrace/pkg/span"
 	"github.com/moshebe/gtrace/pkg/tracer"
 	"github.com/urfave/cli/v2"
 	"google.golang.org/genproto/googleapis/devtools/cloudtrace/v1"
 )
+
+type listResult struct {
+	Span   string   `json:"name"`
+	Traces []string `json:"traces"`
+}
 
 var listAction = func(c *cli.Context) error {
 	if !c.IsSet("project") {
@@ -58,18 +62,25 @@ var listAction = func(c *cli.Context) error {
 
 	rootSpans := span.ListRootSpans(traces)
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 150, 10, '\t', tabwriter.AlignRight)
+	results := make([]listResult, 0, len(rootSpans))
 	for name, ids := range rootSpans {
-		if len(ids) > 1 {
-			_, err = fmt.Fprintf(w, "%s\t\t[%v + %d more...]\n", name, ids[0], len(ids)-1)
-		} else {
-			_, err = fmt.Fprintf(w, "%s\t\t%v\n", name, ids)
-		}
-		if err != nil {
-			return err
-		}
+		results = append(results, listResult{
+			Span:   name,
+			Traces: ids,
+		})
 	}
-	_ = w.Flush()
+
+	var output []byte
+	if c.Bool("pretty") {
+		output, err = json.MarshalIndent(results, "", "\t")
+	} else {
+		output, err = json.Marshal(results)
+	}
+	if err != nil {
+		return fmt.Errorf("marshal results: %w", err)
+	}
+
+	fmt.Println(string(output))
 
 	return nil
 }
@@ -108,6 +119,10 @@ var ListCommand = &cli.Command{
 			Name:   "end",
 			Layout: "2006-01-02T15:04:05",
 			Usage:  "end of the time interval (inclusive) during which the trace data was collected from the application",
+		},
+		&cli.BoolFlag{
+			Name:  "pretty",
+			Usage: "prettify JSON output",
 		},
 	},
 }
