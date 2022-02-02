@@ -13,7 +13,6 @@ import (
 
 var getAction = func(c *cli.Context) error {
 	id := c.Args().First()
-	output := c.Path("output")
 	projects := stringSlice(c, "project")
 
 	if len(projects) == 0 {
@@ -22,12 +21,6 @@ var getAction = func(c *cli.Context) error {
 	if id == "" {
 		return fmt.Errorf("missing trace id")
 	}
-
-	out, err := writer(output)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = out.Close() }()
 
 	ctx, cancel := context.WithTimeout(c.Context, time.Minute)
 	defer cancel()
@@ -54,10 +47,7 @@ var getAction = func(c *cli.Context) error {
 		return fmt.Errorf("marshal trace: %w", err)
 	}
 
-	_, err = out.Write(traceJSON)
-	if err != nil {
-		return fmt.Errorf("write trace: %w", err)
-	}
+	fmt.Println(string(traceJSON))
 
 	return nil
 }
@@ -73,12 +63,6 @@ var GetCommand = &cli.Command{
 			Name:    "project",
 			Aliases: []string{"p"},
 			Usage:   "the Google Cloud project ID to use for this invocation. values can be set multiple times or separated by comma",
-		},
-		&cli.PathFlag{
-			Name:    "output",
-			Aliases: []string{"o", "out"},
-			Value:   "-",
-			Usage:   "output file path. '-' means stdout",
 		},
 		&cli.BoolFlag{
 			Name:  "pretty",

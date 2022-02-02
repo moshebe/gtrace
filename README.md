@@ -65,7 +65,7 @@ gtrace get --project production-a,production-b 5e26a889fa12da351beee9ea16ce0a65
 
 Format trace spans by a specific template:
 ```shell
-gtrace format --input /tmp/trace.json --template "{{ .Name }}, {{ .Duration }}"
+gtrace format -f /tmp/trace.json --template "{{ .Name }}, {{ .Duration }}"
 ```
 
 Query traces by multiple filters from the last 3 hours:
