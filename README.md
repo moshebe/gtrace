@@ -6,6 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/moshebe/gtrace)](https://pkg.go.dev/github.com/moshebe/gtrace)
+[![Go Report Card](https://goreportcard.com/badge/github.com/moshebe/gtrace)](https://goreportcard.com/report/github.com/moshebe/gtrace)
 
 Unofficial, simple yet effective Google Cloud Trace CLI tool.
 
