@@ -13,9 +13,17 @@ var urlAction = func(c *cli.Context) error {
 	}
 
 	projectPath := ""
-	if c.IsSet("project") {
+	if !c.IsSet("project") {
+		project, err := defaultProject(c.Context)
+		if err == nil {
+			c.Set("project", project)
+		}
+	}
+
+	if c.String("project") != "" {
 		projectPath += "&project=" + c.String("project")
 	}
+
 	fmt.Printf("https://console.cloud.google.com/traces/list?tid=%s%s\n", id, projectPath)
 	return nil
 }

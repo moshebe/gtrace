@@ -18,7 +18,12 @@ type listResult struct {
 
 var listAction = func(c *cli.Context) error {
 	if !c.IsSet("project") {
-		return fmt.Errorf("missing project")
+		project, err := defaultProject(c.Context)
+		if err != nil {
+			return err
+		}
+
+		c.Set("project", project)
 	}
 
 	opts := []tracer.ListOption{tracer.WithOnlyRootSpanView(), tracer.WithLimit(10)}

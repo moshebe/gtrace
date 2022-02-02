@@ -1,10 +1,13 @@
 package cli
 
 import (
+	"context"
+	"fmt"
 	"io"
 	"os"
 	"strings"
 
+	"github.com/moshebe/gtrace/pkg/project"
 	"github.com/urfave/cli/v2"
 )
 
@@ -37,4 +40,18 @@ func read(path string) ([]byte, error) {
 		return io.ReadAll(os.Stdin)
 	}
 	return os.ReadFile(path)
+}
+
+func defaultProject(ctx context.Context) (string, error) {
+	p := project.FromApplicationDefault(ctx)
+	if p != "" {
+		return p, nil
+	}
+
+	p = project.FromEnv()
+	if p != "" {
+		return p, nil
+	}
+
+	return "", fmt.Errorf("missing project")
 }

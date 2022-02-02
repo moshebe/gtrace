@@ -16,7 +16,11 @@ var getAction = func(c *cli.Context) error {
 	projects := stringSlice(c, "project")
 
 	if len(projects) == 0 {
-		return fmt.Errorf("missing project")
+		project, err := defaultProject(c.Context)
+		if err != nil {
+			return err
+		}
+		projects = []string{project}
 	}
 	if id == "" {
 		return fmt.Errorf("missing trace id")
