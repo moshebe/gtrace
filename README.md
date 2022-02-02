@@ -13,7 +13,7 @@ Unofficial, simple yet effective Google Cloud Trace CLI tool.
 # Installation
 ### [Homebrew](https://brew.sh/) (Linux/macOS)
 ```shell
-brew install moshebe/gtrace
+brew install moshebe/gtrace/gtrace
 ```
 ### [Go](https://golang.org) (Linux/Windows/macOS/any other platform supported by Go)
 If you have Go 1.16+, you can install latest released version of `gtrace` directly from source by running:
