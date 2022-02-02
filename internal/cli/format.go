@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/moshebe/gtrace/pkg/span"
 	"github.com/urfave/cli/v2"
@@ -11,9 +12,9 @@ import (
 
 var formatAction = func(c *cli.Context) error {
 	format := c.String("template")
-	input, output := c.String("input"), c.String("output")
+	file := c.String("file")
 
-	in, err := read(input)
+	in, err := read(file)
 	if err != nil {
 		return err
 	}
@@ -24,13 +25,7 @@ var formatAction = func(c *cli.Context) error {
 		return fmt.Errorf("unmarshal trace: %w", err)
 	}
 
-	out, err := writer(output)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = out.Close() }()
-
-	return span.Format(trace.Spans, format, out)
+	return span.Format(trace.Spans, format, os.Stdout)
 }
 
 var FormatCommand = &cli.Command{
@@ -41,16 +36,10 @@ var FormatCommand = &cli.Command{
 	Action:      formatAction,
 	Flags: []cli.Flag{
 		&cli.PathFlag{
-			Name:    "input",
-			Aliases: []string{"i", "in"},
+			Name:    "file",
+			Aliases: []string{"f"},
 			Value:   "-",
 			Usage:   "input file path. '-' means stdin",
-		},
-		&cli.PathFlag{
-			Name:    "output",
-			Aliases: []string{"o", "out"},
-			Value:   "-",
-			Usage:   "output file path. '-' means stdout",
 		},
 		&cli.StringFlag{
 			Name:  "template",

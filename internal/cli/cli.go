@@ -38,10 +38,3 @@ func read(path string) ([]byte, error) {
 	}
 	return os.ReadFile(path)
 }
-
-func writer(path string) (io.WriteCloser, error) {
-	if path == "-" {
-		return os.Stdout, nil
-	}
-	return os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0660)
-}
