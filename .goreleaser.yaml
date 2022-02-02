@@ -33,4 +33,4 @@ brews:
     homepage: https://github.com/moshebe/gtrace
     tap:
       owner: moshebe
-      name: homebrew-gtrace
+      name: homebrew-pkg
