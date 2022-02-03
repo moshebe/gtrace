@@ -14,7 +14,7 @@ func App(version string) *cli.App {
 		Version:   version,
 		HelpName:  "gtrace",
 		Usage:     "Google Cloud Trace CLI tool",
-		UsageText: "Simple command-line tool for query and fetch tracing information from Cloud Trace API.\n   Find more information at: https://cloud.google.com/trace/docs",
+		UsageText: "Simple command-line tool to query and fetch tracing information from Cloud Trace API.\n   Find more information at: https://cloud.google.com/trace/docs",
 		Commands: []*cli.Command{
 			GetCommand,
 			ListCommand,
