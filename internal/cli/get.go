@@ -12,13 +12,13 @@ import (
 )
 
 var getAction = func(c *cli.Context) error {
-	id := c.Args().First()
+	ids := c.Args().Slice()
 	projects := stringSlice(c, "project")
 
 	if len(projects) == 0 {
 		return fmt.Errorf("missing project")
 	}
-	if id == "" {
+	if len(ids) == 0 {
 		return fmt.Errorf("missing trace id")
 	}
 
@@ -31,7 +31,7 @@ var getAction = func(c *cli.Context) error {
 	}
 	defer func() { _ = trc.Close() }()
 
-	trace, err := trc.MultiGet(ctx, projects, id)
+	trace, err := trc.MultiGet(ctx, projects, ids)
 	if err != nil {
 		return fmt.Errorf("get trace: %w", err)
 	}

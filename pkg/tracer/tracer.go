@@ -32,19 +32,21 @@ func (t *Tracer) Get(ctx context.Context, projectID, traceID string) (*cloudtrac
 }
 
 // MultiGet retrieve tracer from multiple projects by the tracer id and aggregate the spans.
-func (t *Tracer) MultiGet(ctx context.Context, projects []string, traceID string) (*cloudtrace.Trace, error) {
+func (t *Tracer) MultiGet(ctx context.Context, projects []string, traceIDs []string) (*cloudtrace.Trace, error) {
 	result := &cloudtrace.Trace{
-		TraceId:   traceID,
+		TraceId:   strings.Join(traceIDs, "+"),
 		ProjectId: strings.Join(projects, "+"),
 	}
 	for _, project := range projects {
-		res, err := t.Get(ctx, project, traceID)
-		if err == nil {
-			result.Spans = append(result.Spans, res.Spans...)
+		for _, traceID := range traceIDs {
+			res, err := t.Get(ctx, project, traceID)
+			if err == nil {
+				result.Spans = append(result.Spans, res.Spans...)
+			}
 		}
 	}
 	if len(result.Spans) == 0 {
-		return nil, fmt.Errorf("trace %q not found", traceID)
+		return nil, fmt.Errorf("no spans found for trace %q", traceIDs)
 	}
 	return result, nil
 }
