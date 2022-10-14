@@ -1,6 +1,7 @@
 package span
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"sort"
@@ -95,4 +96,51 @@ func ListRootSpans(traces []*cloudtrace.Trace) map[string][]string {
 		results[name] = append(results[name], t.TraceId)
 	}
 	return results
+}
+
+func DurationSummary(span *cloudtrace.TraceSpan) string {
+	return fmt.Sprintf("%s (%d) - took %s",
+		span.GetName(),
+		span.GetSpanId(),
+		Duration(span))
+}
+
+func Duration(span *cloudtrace.TraceSpan) time.Duration {
+	return span.GetEndTime().AsTime().Sub(span.GetStartTime().AsTime())
+}
+
+func FilterMinDuration(spans []*cloudtrace.TraceSpan, threshold time.Duration) []*cloudtrace.TraceSpan {
+	results := make([]*cloudtrace.TraceSpan, 0, len(spans))
+	for _, span := range spans {
+		if !span.GetEndTime().IsValid() || !span.GetStartTime().IsValid() {
+			continue
+		}
+		duration := span.GetEndTime().AsTime().Sub(span.GetStartTime().AsTime())
+		if duration < threshold {
+			continue
+		}
+		results = append(results, span)
+	}
+	return results
+}
+
+func SubTree(spans []*cloudtrace.TraceSpan, rootID uint64) ([]*cloudtrace.TraceSpan, error) {
+	parents := map[uint64]struct{}{rootID: {}}
+	results := make([]*cloudtrace.TraceSpan, 0, len(spans))
+	for _, span := range spans {
+		if span.GetSpanId() == rootID {
+			results = append(results, span)
+			continue
+		}
+		_, ok := parents[span.GetParentSpanId()]
+		if !ok {
+			continue
+		}
+		parents[span.GetSpanId()] = struct{}{}
+		results = append(results, span)
+	}
+	if len(results) == 0 {
+		return nil, errors.New("root span was not found")
+	}
+	return results, nil
 }
