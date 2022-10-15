@@ -20,6 +20,8 @@ func App(version string) *cli.App {
 			ListCommand,
 			URLCommand,
 			FormatCommand,
+			DurationCommand,
+			SubtreeCommand,
 		},
 	}
 }

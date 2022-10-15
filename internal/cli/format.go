@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/moshebe/gtrace/pkg/span"
@@ -9,6 +10,15 @@ import (
 	"google.golang.org/genproto/googleapis/devtools/cloudtrace/v1"
 	"google.golang.org/protobuf/encoding/protojson"
 )
+
+func printTraceJSON(w io.Writer, trace *cloudtrace.Trace) error {
+	out, err := protojson.Marshal(trace)
+	if err != nil {
+		return fmt.Errorf("marshal trace: %w", err)
+	}
+	_, err = fmt.Fprint(w, string(out))
+	return err
+}
 
 var formatAction = func(c *cli.Context) error {
 	format := c.String("template")

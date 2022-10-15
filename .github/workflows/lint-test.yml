@@ -20,9 +20,9 @@ jobs:
         with:
           go-version: '^1.18'
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v3.2.0
         with:
-          version: v1.46.2
+          version: v1.50
   test:
     name: Test
     runs-on: ubuntu-latest

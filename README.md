@@ -39,7 +39,9 @@ COMMANDS:
    get      Get a specific trace by id from one or more projects
    list     Query traces from a project according to the given conditions
    url      Generate a browsable URL for a given trace
-   format   Format trace spans according to a given template
+   format   Format trace spans according to a given template      
+   duration  Filter trace spans by total duration
+   subtree   Extract span and all its children for a given trace
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
