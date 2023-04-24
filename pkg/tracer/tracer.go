@@ -52,7 +52,7 @@ func (t *Tracer) MultiGet(ctx context.Context, projects []string, traceIDs []str
 }
 
 // List returns of a list of traces that match the specified options conditions.
-func (t *Tracer) List(ctx context.Context, projectID string, opts ...ListOption) ([]*cloudtrace.Trace, error) {
+func (t *Tracer) List(ctx context.Context, projectID string, limit int32, opts ...ListOption) ([]*cloudtrace.Trace, error) {
 	req := &cloudtrace.ListTracesRequest{
 		ProjectId: projectID,
 		View:      cloudtrace.ListTracesRequest_COMPLETE,
@@ -63,6 +63,7 @@ func (t *Tracer) List(ctx context.Context, projectID string, opts ...ListOption)
 
 	var traces []*cloudtrace.Trace
 	it := t.client.ListTraces(ctx, req)
+	var count int32 = 0
 	for {
 		trace, err := it.Next()
 		if err == iterator.Done {
@@ -71,8 +72,11 @@ func (t *Tracer) List(ctx context.Context, projectID string, opts ...ListOption)
 		if err != nil {
 			return nil, err
 		}
-
+		count++
 		traces = append(traces, trace)
+		if count >= limit {
+			break
+		}
 	}
 
 	return traces, nil
