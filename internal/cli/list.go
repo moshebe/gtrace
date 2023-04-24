@@ -20,11 +20,13 @@ var listAction = func(c *cli.Context) error {
 	if !c.IsSet("project") {
 		return fmt.Errorf("missing project")
 	}
+	var limit int32 = 10
 
 	opts := []tracer.ListOption{tracer.WithOnlyRootSpanView(), tracer.WithLimit(10)}
 
 	if c.IsSet("limit") {
-		opts = append(opts, tracer.WithLimit(int32(c.Int("limit"))))
+		limit = int32(c.Int("limit"))
+		opts = append(opts, tracer.WithLimit(limit))
 	}
 
 	if c.IsSet("since") {
@@ -55,7 +57,7 @@ var listAction = func(c *cli.Context) error {
 	}
 	defer func() { _ = trc.Close() }()
 
-	traces, err := trc.List(ctx, c.String("project"), opts...)
+	traces, err := trc.List(ctx, c.String("project"), limit, opts...)
 	if err != nil {
 		return fmt.Errorf("list traces: %w", err)
 	}
