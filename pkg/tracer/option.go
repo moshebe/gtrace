@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"google.golang.org/genproto/googleapis/devtools/cloudtrace/v1"
+	cloudtrace "cloud.google.com/go/trace/apiv1/tracepb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

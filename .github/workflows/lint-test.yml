@@ -15,45 +15,30 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: '^1.18'
+          go-version: stable
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3.2.0
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.50
+          version: latest
   test:
     name: Test
     runs-on: ubuntu-latest
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.18.x
     - name: Checkout code
-      uses: actions/checkout@v3
-    - uses: actions/cache@v2
+      uses: actions/checkout@v4
+    - name: Install Go
+      uses: actions/setup-go@v5
       with:
-        # In order:
-        # * Module download cache
-        # * Build cache (Linux)
-        # * Build cache (Mac)
-        # * Build cache (Windows)
-        path: |
-          ~/go/pkg/mod
-          ~/.cache/go-build
-          ~/Library/Caches/go-build
-          %LocalAppData%\go-build
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
+        go-version: stable
+        cache: true
     - name: Test
-      run: go test -cover ./...
-    - name: Coverage
+      run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+    - name: Upload coverage to Codecov
       if: github.repository_owner == 'moshebe'
-      run: |
-        echo -n > coverage.txt
-        for pkg in $(go list ./...) ; do go test -coverprofile=profile.out -covermode=atomic ${pkg} && cat profile.out >> coverage.txt; done
-
-        bash <(curl -s https://codecov.io/bash)
+      uses: codecov/codecov-action@v4
+      with:
+        files: ./coverage.txt
+        fail_ci_if_error: false

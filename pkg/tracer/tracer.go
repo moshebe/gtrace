@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	traceapi "cloud.google.com/go/trace/apiv1"
+	cloudtrace "cloud.google.com/go/trace/apiv1/tracepb"
 	"google.golang.org/api/iterator"
-	"google.golang.org/genproto/googleapis/devtools/cloudtrace/v1"
 )
 
 type Tracer struct {

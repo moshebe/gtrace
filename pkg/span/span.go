@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/moshebe/gtrace/pkg/filter"
-	"google.golang.org/genproto/googleapis/devtools/cloudtrace/v1"
+	cloudtrace "cloud.google.com/go/trace/apiv1/tracepb"
 )
 
 func Names(spans []*cloudtrace.TraceSpan) []string {

@@ -8,7 +8,7 @@ import (
 	"github.com/moshebe/gtrace/pkg/span"
 	"github.com/moshebe/gtrace/pkg/tracer"
 	"github.com/urfave/cli/v2"
-	"google.golang.org/genproto/googleapis/devtools/cloudtrace/v1"
+	cloudtrace "cloud.google.com/go/trace/apiv1/tracepb"
 )
 
 type listResult struct {
