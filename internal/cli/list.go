@@ -72,17 +72,29 @@ var listAction = func(c *cli.Context) error {
 		})
 	}
 
-	var output []byte
-	if c.Bool("pretty") {
-		output, err = json.MarshalIndent(results, "", "\t")
-	} else {
-		output, err = json.Marshal(results)
+	format := c.String("format")
+	switch format {
+	case "json":
+		var output []byte
+		if c.Bool("pretty") {
+			output, err = json.MarshalIndent(results, "", "\t")
+		} else {
+			output, err = json.Marshal(results)
+		}
+		if err != nil {
+			return fmt.Errorf("marshal results: %w", err)
+		}
+		fmt.Println(string(output))
+	case "text":
+		for _, result := range results {
+			fmt.Printf("%s (%d traces)\n", result.Span, len(result.Traces))
+			for _, traceID := range result.Traces {
+				fmt.Printf("  %s\n", traceID)
+			}
+		}
+	default:
+		return fmt.Errorf("unsupported format: %s (supported formats: json, text)", format)
 	}
-	if err != nil {
-		return fmt.Errorf("marshal results: %w", err)
-	}
-
-	fmt.Println(string(output))
 
 	return nil
 }
@@ -125,6 +137,11 @@ var ListCommand = &cli.Command{
 		&cli.BoolFlag{
 			Name:  "pretty",
 			Usage: "prettify JSON output",
+		},
+		&cli.StringFlag{
+			Name:  "format",
+			Value: "json",
+			Usage: "output format: json or text",
 		},
 	},
 }
